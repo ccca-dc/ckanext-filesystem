@@ -1,0 +1,6 @@
+
+        [ckan.plugins]
+        filesystem=ckanext.filesystem.plugin:FilesystemPlugin
+	[babel.extractors]
+	ckan = ckan.lib.extract:extract_ckan
+    
