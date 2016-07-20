@@ -83,6 +83,7 @@ class FileSystemResourceUpload(object):
             self.upload_file = upload_field.file
         # upload is basestring (path to local file)
         elif isinstance(upload_field, basestring):
+            #FIXME check if local file exists
             log.debug('Upload_field: ' + upload_field)
             log.debug('Upload local File: ' + os.path.basename(upload_field))
             self.filepath = os.path.dirname(upload_field)
