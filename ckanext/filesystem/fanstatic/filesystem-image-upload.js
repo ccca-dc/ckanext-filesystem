@@ -42,6 +42,7 @@ this.ckan.module('filesystem-image-upload', function($, _) {
       this.field_image = this.input.parents('.control-group');
       this.field_image_sftp = this.input.parents('.control-group');
       this.field_url_input = $('input', this.field_url);
+      this.field_upload = $(field_upload, this.el).parents('.control-group');
 
       // Is there a clear checkbox on the form already?
       var checkbox = $(field_clear, this.el);
@@ -84,8 +85,8 @@ this.ckan.module('filesystem-image-upload', function($, _) {
       .on('click', function() {$('#div_sftp').animate( { "opacity": "hide", top:"100"} , 500 );})
       .appendTo(this.div_sftp);
 
-      // Button to confirm the selected file to import from local import directory
-      this.button_sftp = $('<a href="javascript:;" id="button_sftp" class="btn btn-primary" disabled>Import</a>')
+      // Button to confirm the selected file to select from local import directory
+      this.button_sftp = $('<a href="javascript:;" id="button_sftp" class="btn btn-primary" disabled>Choose</a>')
       .on('click', this._onInputChangeSFTP)
       .appendTo(this.div_sftp);
 
@@ -223,35 +224,56 @@ this.ckan.module('filesystem-image-upload', function($, _) {
     	var selected = $("#select_sftp option:selected");
     	var obj = this;
     	if (selected.length>0) {
-    		console.log("Importing file");
     		var loc = window.location.pathname;
-    		var homeDir = loc.substring(0, loc.lastIndexOf('/'));
-    		var paramString="?apikey=" + this.options.apikey
-    		+ "&package_id=" + this.options.pkg_id
-    		+ "&filename=" + selected[0].value;
-
-    		 $.ajax({
-    			 method: "GET",
-    			 headers: {},
-	   	    	 url: "/sftp_upload"+paramString,
-	   	    	 context: document.body,
-   	    	}).success(function(json) {
-   	    		var response = jQuery.parseJSON(json);
-   	    		var url = response.url;
-   	    		console.log(url);
-	   	     	obj.field_url_input.val(url);
-	   	     	obj.field_url_input.prop('readonly', true);
-	   	     	obj.field_clear.val('');
-			   	obj._showOnlyFieldUrl();
-			   	obj.div_sftp.hide();
-			   	$('#upload_type').val('sftp');
-			   	$('#res_id').val(response.id);
-   	    	}).error(function(xhr, status, thrownError) {
-	    		console.log('file import request failed: ' + thrownError);
-	    	});
+    		var file_name= selected[0].value;
+    		console.log("Importing file: " + file_name);
+        this.field_url_input.val(file_name);
+        this.field_url_input.prop('readonly', true);
+        this.field_clear.val('');
+        this._showOnlyFieldUrl();
+		    this.div_sftp.hide();
+		    $('#upload_path').val(file_name);
+		      // 	   	$('#upload_type').val('sftp');
+		      // 	   	$('#res_id').val(response.id);
+   	      //     	}).error(function(xhr, status, thrownError) {
+	        //   		console.log('file import request failed: ' + thrownError);
     	}
 
     },
+
+    // _onInputChangeSFTP: function() {
+    // 	var selected = $("#select_sftp option:selected");
+    // 	var obj = this;
+    // 	if (selected.length>0) {
+    // 		console.log("Importing file");
+    // 		var loc = window.location.pathname;
+    // 		var homeDir = loc.substring(0, loc.lastIndexOf('/'));
+    // 		var paramString="?apikey=" + this.options.apikey
+    // 		+ "&package_id=" + this.options.pkg_id
+    // 		+ "&filename=" + selected[0].value;
+
+    // 		 $.ajax({
+    // 			 method: "GET",
+    // 			 headers: {},
+	  //  	    	 url: "/sftp_upload"+paramString,
+	  //  	    	 context: document.body,
+   	//     	}).success(function(json) {
+   	//     		var response = jQuery.parseJSON(json);
+   	//     		var url = response.url;
+   	//     		console.log(url);
+	  //  	     	obj.field_url_input.val(url);
+	  //  	     	obj.field_url_input.prop('readonly', true);
+	  //  	     	obj.field_clear.val('');
+		// 	   	obj._showOnlyFieldUrl();
+		// 	   	obj.div_sftp.hide();
+		// 	   	$('#upload_type').val('sftp');
+		// 	   	$('#res_id').val(response.id);
+   	//     	}).error(function(xhr, status, thrownError) {
+	  //   		console.log('file import request failed: ' + thrownError);
+	  //   	});
+    // 	}
+
+    // },
 
     /* Show only the buttons, hiding all others
      *

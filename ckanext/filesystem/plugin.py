@@ -9,19 +9,18 @@ class ConfigError(Exception):
     pass
 
 class FilesystemPlugin(plugins.SingletonPlugin):
-    plugins.implements(plugins.IConfigurer)
+    plugins.implements(plugins.IConfigurer, inherit=True)
+    plugins.implements(plugins.IRoutes, inherit=True)
     plugins.implements(plugins.IConfigurable)
     plugins.implements(plugins.IUploader)
 
     # IConfigurer
-
     def update_config(self, config_):
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'filesystem')
 
     # IConfigurable
-
     def configure(self, main_config):
         """Implementation of IConfigurable.configure"""
         schema = {
@@ -65,35 +64,34 @@ class FilesystemPlugin(plugins.SingletonPlugin):
             raise ConfigError("\n".join(errors))
 
     # IUploader
-
-    # def get_uploader(self, upload_to, old_filename=None):
-    #     '''Return an uploader object used to upload general files.'''
-    #     return ckanext.s3filestore.uploader.FilesystemResourceUpload(upload_to,
-    #                                                    old_filename)
-
     def get_resource_uploader(self, data_dict):
         '''Return an uploader object used to upload resource files.'''
         return uploader.FileSystemResourceUpload(data_dict)
 
     # IRoutes
+    def before_map(self, map):
+        # Local file import
+        map.connect('sftp_filelist', '/sftp_filelist',
+                    controller='ckanext.filesystem.controllers.upload:UploadController',
+                    action='show_filelist')
+        map.connect('sftp_upload', '/sftp_upload',
+                    controller='ckanext.filesystem.controllers.upload:UploadController',
+                    action='upload_file')
+        # Package
+        map.connect('new_resource', '/dataset/new_resource/{id}',
+                    controller='ckanext.filesystem.controllers.package_override:PackageContributeOverride',
+                    action='new_resource')
+        # map.connect('custom_resource_edit', '/dataset/{id}/resource_edit/{resource_id}',
+        #             controller='ckanext.ccca.controllers.package_override:PackageContributeOverride',
+        #             action='resource_edit')
+        # map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}',
+        #             controller='ckanext.ccca.controllers.package_override:PackageContributeOverride',
+        #             action='resource_download')
+        #map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}',
+        #            controller='ckanext.ccca.controllers.download:DownloadController',
+        #            action='resource_download_ext')
+        return map
 
-    # def before_map(self, map):
-    #     with SubMapper(map, controller='ckanext.s3filestore.controller:S3Controller') as m:
-    #         # Override the resource download links
-    #         m.connect('resource_download',
-    #                   '/dataset/{id}/resource/{resource_id}/download',
-    #                   action='resource_download')
-    #         m.connect('resource_download',
-    #                   '/dataset/{id}/resource/{resource_id}/download/{filename}',
-    #                   action='resource_download')
-
-    #         # fallback controller action to download from the filesystem
-    #         m.connect('filesystem_resource_download',
-    #                   '/dataset/{id}/resource/{resource_id}/fs_download/{filename}',
-    #                   action='filesystem_resource_download')
-
-    #         # Intercept the uploaded file links (e.g. group images)
-    #         m.connect('uploaded_file', '/uploads/{upload_to}/{filename}',
-    #                   action='uploaded_file_redirect')
-
-    #     return map
+    def after_map(self, map):
+        #log.fatal("==================================> %s" % map)
+        return map

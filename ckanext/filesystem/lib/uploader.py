@@ -9,6 +9,7 @@ import cgi
 import pylons
 import datetime
 import mimetypes
+import pathlib2
 
 config = pylons.config
 log = logging.getLogger(__name__)
@@ -81,13 +82,10 @@ class FileSystemResourceUpload(object):
             resource['last_modified'] = datetime.datetime.utcnow()
             self.url_type = resource['url_type']
             self.upload_file = upload_field.file
-        # upload is basestring (path to local file)
-        elif isinstance(upload_field, basestring):
-            #FIXME check if local file exists
-            log.debug('Upload_field: ' + upload_field)
-            log.debug('Upload local File: ' + os.path.basename(upload_field))
-            self.filepath = os.path.dirname(upload_field)
-            self.filename = os.path.basename(upload_field)
+        # upload is path to local file
+        elif isinstance(upload_field, pathlib2.Path):
+            self.localpath = str(upload_field.absolute())
+            self.filename = upload_field.name
             # self.filename = munge.munge_filename(self.filename)
             resource['url'] = munge.munge_filename(self.filename)
             log.debug('URL: ' + resource['url'])
@@ -157,8 +155,8 @@ class FileSystemResourceUpload(object):
                 return
             elif self.url_type == 'local':
                 # Move file to ckan file system path
-                # os.rename(os.path.join(self.filepath,self.filename),filepath)
-                shutil.move(os.path.join(self.filepath,self.filename),filepath)
+                # FIXME ownership of file and exceptions
+                shutil.move(self.localpath,filepath)
                 return
 
         # The resource form only sets self.clear (via the input clear_upload)
