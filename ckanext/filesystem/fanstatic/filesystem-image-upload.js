@@ -37,6 +37,9 @@ this.ckan.module('filesystem-image-upload', function($, _) {
       var field_url = 'input[name="' + options.field_url + '"]';
       var field_clear = 'input[name="' + options.field_clear + '"]';
 
+      // FIXME Define Variable in global scope - Bad Practice
+      apikey = options.apikey;
+
       this.input = $(field_upload, this.el);
       this.field_url = $(field_url, this.el).parents('.control-group');
       this.field_image = this.input.parents('.control-group');
@@ -54,9 +57,6 @@ this.ckan.module('filesystem-image-upload', function($, _) {
       // Adds the hidden clear input to the form
       this.field_clear = $('<input type="hidden" name="clear_upload">')
         .appendTo(this.el);
-
-      // this.field_clear = $('<input id="input_sftp_apikey" type="hidden" name="input_sftp_apikey" value="'+this.options.apikey+'">')
-      // .appendTo(this.el);
 
       // Adds the hidden text field for sftp upload
       this.div_sftp = $('<div id="div_sftp" style="display: none;" name="sftp_upload">')
@@ -76,7 +76,7 @@ this.ckan.module('filesystem-image-upload', function($, _) {
       .appendTo(this.div_sftp);
 
       // Button to refresh the file list from sftp import dir
-      this.button_sftp_refresh = $('<a href="javascript:;" id="button_sftp_refresh" apikey="'+ options.apikey + '" class="btn">Refresh</a>')
+      this.button_sftp_refresh = $('<a href="javascript:;" id="button_sftp_refresh" class="btn">Refresh</a>')
       .on('click', this._refreshSFTPFilelist)
       .appendTo(this.div_sftp);
 
@@ -92,13 +92,13 @@ this.ckan.module('filesystem-image-upload', function($, _) {
 
       // Button to set the field to be a URL
       this.button_url = $('<a href="javascript:;" class="btn"><i class="icon-globe"></i> '+this.i18n('url')+'</a>')
-        .prop('title', this.i18n('url_tooltip'))
-        .on('click', this._onFromWeb)
-        // .on('click', function() {$('#div_sftp').animate( { "opacity": "hide", top:"100"} , 500 );})
-        .insertAfter(this.input);
+      .prop('title', this.i18n('url_tooltip'))
+      .on('click', this._onFromWeb)
+      .on('click', function() {$('#div_sftp').animate( { "opacity": "hide", top:"100"} , 500 );})
+      .insertAfter(this.input);
 
       // Button to attach file from sftp to the form
-      this.button_upload_sftp = $('<a href="javascript:;" class="btn"><i class="icon-upload"></i>Import SFTP</a>')
+      this.button_upload_sftp = $('<a href="javascript:;" id="button_upload_sftp" class="btn"><i class="icon-upload"></i>Import SFTP</a>')
       .prop('title', 'Imported from SFTP upload')
       .on('click', this._onSFTP)
       .insertAfter(this.input);
@@ -157,9 +157,7 @@ this.ckan.module('filesystem-image-upload', function($, _) {
    },
 
    _refreshSFTPFilelist: function() {
-     var apikey = this.options.apikey
-	   console.log('apikey: ' + apikey);
-	   console.log('_refreshSFTPFilelist()');
+     // var apikey = this.options.apikey;
 	   $.ajax({
 	    	  url: "/sftp_filelist?apikey=" + apikey,
 	    	  context: document.body
@@ -232,48 +230,10 @@ this.ckan.module('filesystem-image-upload', function($, _) {
         this.field_clear.val('');
         this._showOnlyFieldUrl();
 		    this.div_sftp.hide();
-		    $('#upload_path').val(file_name);
-		      // 	   	$('#upload_type').val('sftp');
-		      // 	   	$('#res_id').val(response.id);
-   	      //     	}).error(function(xhr, status, thrownError) {
-	        //   		console.log('file import request failed: ' + thrownError);
+		    $('#upload_local').val(file_name);
     	}
 
     },
-
-    // _onInputChangeSFTP: function() {
-    // 	var selected = $("#select_sftp option:selected");
-    // 	var obj = this;
-    // 	if (selected.length>0) {
-    // 		console.log("Importing file");
-    // 		var loc = window.location.pathname;
-    // 		var homeDir = loc.substring(0, loc.lastIndexOf('/'));
-    // 		var paramString="?apikey=" + this.options.apikey
-    // 		+ "&package_id=" + this.options.pkg_id
-    // 		+ "&filename=" + selected[0].value;
-
-    // 		 $.ajax({
-    // 			 method: "GET",
-    // 			 headers: {},
-	  //  	    	 url: "/sftp_upload"+paramString,
-	  //  	    	 context: document.body,
-   	//     	}).success(function(json) {
-   	//     		var response = jQuery.parseJSON(json);
-   	//     		var url = response.url;
-   	//     		console.log(url);
-	  //  	     	obj.field_url_input.val(url);
-	  //  	     	obj.field_url_input.prop('readonly', true);
-	  //  	     	obj.field_clear.val('');
-		// 	   	obj._showOnlyFieldUrl();
-		// 	   	obj.div_sftp.hide();
-		// 	   	$('#upload_type').val('sftp');
-		// 	   	$('#res_id').val(response.id);
-   	//     	}).error(function(xhr, status, thrownError) {
-	  //   		console.log('file import request failed: ' + thrownError);
-	  //   	});
-    // 	}
-
-    // },
 
     /* Show only the buttons, hiding all others
      *

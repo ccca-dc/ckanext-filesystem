@@ -75,6 +75,7 @@ class FileSystemResourceUpload(object):
 
         # upload is FieldStorage
         if isinstance(upload_field, cgi.FieldStorage):
+            self.upload_type = 'remote'
             self.filename = upload_field.filename
             # self.filename = munge.munge_filename(self.filename)
             resource['url'] = munge.munge_filename(self.filename)
@@ -84,12 +85,13 @@ class FileSystemResourceUpload(object):
             self.upload_file = upload_field.file
         # upload is path to local file
         elif isinstance(upload_field, pathlib2.Path):
-            self.localpath = str(upload_field.absolute())
+            self.upload_type = 'local'
+            self.localpath = upload_field.absolute()
             self.filename = upload_field.name
             # self.filename = munge.munge_filename(self.filename)
             resource['url'] = munge.munge_filename(self.filename)
-            log.debug('URL: ' + resource['url'])
-            resource['url_type'] = 'local'
+            resource['url_type'] = 'upload'
+            resource['last_modified'] = datetime.datetime.utcnow()
             self.url_type = resource['url_type']
         elif self.clear:
             resource['url_type'] = ''
@@ -133,7 +135,7 @@ class FileSystemResourceUpload(object):
                 # errno 17 is file already exists
                 if e.errno != 17:
                     raise
-            if self.url_type == 'upload':
+            if self.upload_type == 'remote':
                 tmp_filepath = filepath + '~'
                 output_file = open(tmp_filepath, 'wb+')
                 self.upload_file.seek(0)
@@ -153,10 +155,10 @@ class FileSystemResourceUpload(object):
                 output_file.close()
                 os.rename(tmp_filepath, filepath)
                 return
-            elif self.url_type == 'local':
+            elif self.upload_type == 'local':
                 # Move file to ckan file system path
-                # FIXME ownership of file and exceptions
-                shutil.move(self.localpath,filepath)
+                # os.rename(os.path.join(self.filepath,self.filename),filepath)
+                shutil.move(str(self.localpath),filepath)
                 return
 
         # The resource form only sets self.clear (via the input clear_upload)

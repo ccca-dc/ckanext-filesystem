@@ -12,7 +12,7 @@
     {% set upload_label = upload_label or _('Image')  %}
 
     {% set field_url='url' %}
-    {% set field_upload='upload_file' %}
+    {% set field_upload='upload_remote' %}
     {% set field_clear='clear_upload' %}
     {% set is_upload_enabled=h.uploads_enabled() %}
     {% set is_url=data.url and not is_upload %}
@@ -20,7 +20,7 @@
     {% set url_label=_('URL') %}
 
     {% if is_upload_enabled %}
-    <input id="upload_path" name="upload_path" type="hidden" value="">
+    <input id="upload_local" name="upload_local" type="hidden" value="">
     <div class="image-upload" data-module="filesystem-image-upload"
          data-module-host_url="{{ request.host_url }}"
          data-module-is_url="{{ 'true' if is_url else 'false' }}"

@@ -81,15 +81,6 @@ class FilesystemPlugin(plugins.SingletonPlugin):
         map.connect('new_resource', '/dataset/new_resource/{id}',
                     controller='ckanext.filesystem.controllers.package_override:PackageContributeOverride',
                     action='new_resource')
-        # map.connect('custom_resource_edit', '/dataset/{id}/resource_edit/{resource_id}',
-        #             controller='ckanext.ccca.controllers.package_override:PackageContributeOverride',
-        #             action='resource_edit')
-        # map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}',
-        #             controller='ckanext.ccca.controllers.package_override:PackageContributeOverride',
-        #             action='resource_download')
-        #map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}',
-        #            controller='ckanext.ccca.controllers.download:DownloadController',
-        #            action='resource_download_ext')
         return map
 
     def after_map(self, map):
