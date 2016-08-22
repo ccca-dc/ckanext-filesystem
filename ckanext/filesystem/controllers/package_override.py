@@ -62,10 +62,13 @@ class PackageContributeOverride(p.SingletonPlugin, PackageController):
             if isinstance(data['upload_remote'],cgi.FieldStorage):
                 data['upload'] = data.pop('upload_remote')
                 del data['upload_local']
-            elif pathlib2.Path.exists(pathlib2.Path(os.path.join(
+            elif data['upload_local'] and pathlib2.Path.exists(pathlib2.Path(os.path.join(
                     os.path.expanduser('~'+c.userobj.name),data.get('upload_local')))):
                 data['upload'] = pathlib2.Path(os.path.join(
                     os.path.expanduser('~'+c.userobj.name),data.pop('upload_local')))
+                del data['upload_remote']
+            else:
+                del data['upload_local']
                 del data['upload_remote']
 
             # see if we have any data that we are trying to save
