@@ -10,22 +10,22 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='''ckanext-filesystem''',
+    name='''ckanext-localimp''',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
     version='0.0.1',
 
-    description='''File based upload and download extension, the users home directory is used for input and output.''',
+    description='''Local upload extension, the users home directory is used as input source for file uploads.''',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/ccca-dc/ckanext-filesystem',
+    url='https://github.com/ccca-dc/ckanext-localimp',
 
     # Author details
-    author='''Georg Anton Seyerl''',
-    author_email='''georg.seyerl@zamg.ac.at''',
+    author='''Georg Seyerl''',
+    author_email='''georg.seyerl@ccca.ac.at''',
 
     # Choose your license
     license='AGPL',
@@ -49,7 +49,7 @@ setup(
 
 
     # What does your project relate to?
-    keywords='''CKAN Filebased Upload/Download''',
+    keywords='''CKAN local import''',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
@@ -79,7 +79,7 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points='''
         [ckan.plugins]
-        filesystem=ckanext.filesystem.plugin:FilesystemPlugin
+        localimp=ckanext.localimp.plugin:LocalimpPlugin
 	[babel.extractors]
 	ckan = ckan.lib.extract:extract_ckan
     ''',

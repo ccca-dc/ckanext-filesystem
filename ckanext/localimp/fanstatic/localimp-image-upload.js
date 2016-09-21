@@ -1,7 +1,7 @@
 /* Extends upload functionality by import from a local directory.
  */ 
 
-this.ckan.module('filesystem-image-upload', function($, _) {
+this.ckan.module('localimp-image-upload', function($, _) {
   return {
     /* options object can be extended using data-module-* attributes */
     options: {

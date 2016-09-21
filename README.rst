@@ -2,34 +2,34 @@
    these badges work. The necessary Travis and Coverage config files have been
    generated for you.
 
-.. image:: https://travis-ci.org/ccca-dc/ckanext-filesystem.svg?branch=master
-    :target: https://travis-ci.org/ccca-dc/ckanext-filesystem
+.. image:: https://travis-ci.org/surel89/ckanext-localimp.svg?branch=master
+    :target: https://travis-ci.org/surel89/ckanext-localimp
 
-.. image:: https://coveralls.io/repos/ccca-dc/ckanext-filesystem/badge.svg
-  :target: https://coveralls.io/r/ccca-dc/ckanext-filesystem
+.. image:: https://coveralls.io/repos/surel89/ckanext-localimp/badge.svg
+  :target: https://coveralls.io/r/surel89/ckanext-localimp
 
-.. image:: https://pypip.in/download/ckanext-filesystem/badge.svg
-    :target: https://pypi.python.org/pypi//ckanext-filesystem/
+.. image:: https://pypip.in/download/ckanext-localimp/badge.svg
+    :target: https://pypi.python.org/pypi//ckanext-localimp/
     :alt: Downloads
 
-.. image:: https://pypip.in/version/ckanext-filesystem/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-filesystem/
+.. image:: https://pypip.in/version/ckanext-localimp/badge.svg
+    :target: https://pypi.python.org/pypi/ckanext-localimp/
     :alt: Latest Version
 
-.. image:: https://pypip.in/py_versions/ckanext-filesystem/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-filesystem/
+.. image:: https://pypip.in/py_versions/ckanext-localimp/badge.svg
+    :target: https://pypi.python.org/pypi/ckanext-localimp/
     :alt: Supported Python versions
 
-.. image:: https://pypip.in/status/ckanext-filesystem/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-filesystem/
+.. image:: https://pypip.in/status/ckanext-localimp/badge.svg
+    :target: https://pypi.python.org/pypi/ckanext-localimp/
     :alt: Development Status
 
-.. image:: https://pypip.in/license/ckanext-filesystem/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-filesystem/
+.. image:: https://pypip.in/license/ckanext-localimp/badge.svg
+    :target: https://pypi.python.org/pypi/ckanext-localimp/
     :alt: License
 
 =============
-ckanext-filesystem
+ckanext-localimp
 =============
 
 .. Put a description of your extension here:
@@ -53,17 +53,17 @@ Installation
    For example installing any non-Python dependencies or adding any required
    config settings.
 
-To install ckanext-filesystem:
+To install ckanext-localimp:
 
 1. Activate your CKAN virtual environment, for example::
 
      . /usr/lib/ckan/default/bin/activate
 
-2. Install the ckanext-filesystem Python package into your virtual environment::
+2. Install the ckanext-localimp Python package into your virtual environment::
 
-     pip install ckanext-filesystem
+     pip install ckanext-localimp
 
-3. Add ``filesystem`` to the ``ckan.plugins`` setting in your CKAN
+3. Add ``localimp`` to the ``ckan.plugins`` setting in your CKAN
    config file (by default the config file is located at
    ``/etc/ckan/default/production.ini``).
 
@@ -80,18 +80,18 @@ Document any optional config settings here. For example::
 
     # The minimum number of hours to wait before re-checking a resource
     # (optional, default: 24).
-    ckanext.filesystem.some_setting = some_default_value
+    ckanext.localimp.some_setting = some_default_value
 
 
 ------------------------
 Development Installation
 ------------------------
 
-To install ckanext-filesystem for development, activate your CKAN virtualenv and
+To install ckanext-localimp for development, activate your CKAN virtualenv and
 do::
 
-    git clone https://github.com/ccca-dc/ckanext-filesystem.git
-    cd ckanext-filesystem
+    git clone https://github.com/surel89/ckanext-localimp.git
+    cd ckanext-localimp
     python setup.py develop
     pip install -r dev-requirements.txt
 
@@ -107,15 +107,15 @@ To run the tests, do::
 To run the tests and produce a coverage report, first make sure you have
 coverage installed in your virtualenv (``pip install coverage``) then run::
 
-    nosetests --nologcapture --with-pylons=test.ini --with-coverage --cover-package=ckanext.filesystem --cover-inclusive --cover-erase --cover-tests
+    nosetests --nologcapture --with-pylons=test.ini --with-coverage --cover-package=ckanext.localimp --cover-inclusive --cover-erase --cover-tests
 
 
 ---------------------------------
-Registering ckanext-filesystem on PyPI
+Registering ckanext-localimp on PyPI
 ---------------------------------
 
-ckanext-filesystem should be availabe on PyPI as
-https://pypi.python.org/pypi/ckanext-filesystem. If that link doesn't work, then
+ckanext-localimp should be availabe on PyPI as
+https://pypi.python.org/pypi/ckanext-localimp. If that link doesn't work, then
 you can register the project on PyPI for the first time by following these
 steps:
 
@@ -140,10 +140,10 @@ steps:
 
 
 ----------------------------------------
-Releasing a New Version of ckanext-filesystem
+Releasing a New Version of ckanext-localimp
 ----------------------------------------
 
-ckanext-filesystem is availabe on PyPI as https://pypi.python.org/pypi/ckanext-filesystem.
+ckanext-localimp is availabe on PyPI as https://pypi.python.org/pypi/ckanext-localimp.
 To publish a new version to PyPI follow these steps:
 
 1. Update the version number in the ``setup.py`` file.

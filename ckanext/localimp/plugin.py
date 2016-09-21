@@ -1,14 +1,14 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 
-import ckanext.filesystem.lib.uploader
+import ckanext.localimp.lib.uploader
 
 config = {}
 
 class ConfigError(Exception):
     pass
 
-class FilesystemPlugin(plugins.SingletonPlugin):
+class LocalimpPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer, inherit=True)
     plugins.implements(plugins.IRoutes, inherit=True)
     # plugins.implements(plugins.IConfigurable)
@@ -18,13 +18,13 @@ class FilesystemPlugin(plugins.SingletonPlugin):
     def update_config(self, config_):
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('fanstatic', 'filesystem')
+        toolkit.add_resource('fanstatic', 'localimp')
 
     # IConfigurable
     # def configure(self, main_config):
     #     """Implementation of IConfigurable.configure"""
     #     schema = {
-    #         'ckanext.filesystem.storage_path': {'required': True},
+    #         'ckanext.localimp.storage_path': {'required': True},
     #         # 'ckanext.ldap.auth.dn': {},
     #         # 'ckanext.ldap.auth.password': {'required_if': 'ckanext.ldap.auth.dn'},
     #         # 'ckanext.ldap.search.alt': {},
@@ -39,9 +39,9 @@ class FilesystemPlugin(plugins.SingletonPlugin):
     #         if i in main_config:
     #             v = main_config[i]
     #         elif i.replace('ckanext.', '') in main_config:
-    #             log.warning('Filesystem configuration options should be prefixed with \'ckanext.\'. ' +
+    #             log.warning('Localimp configuration options should be prefixed with \'ckanext.\'. ' +
     #                         'Please update {0} to {1}'.format(i.replace('ckanext.', ''), i))
-    #             # Support filesystem.* options for backwards compatibility
+    #             # Support localimp.* options for backwards compatibility
     #             main_config[i] = main_config[i.replace('ckanext.', '')]
     #             v = main_config[i]
 
@@ -66,23 +66,23 @@ class FilesystemPlugin(plugins.SingletonPlugin):
     # IUploader
     def get_uploader(self, upload_to, old_filename=None):
         '''Return an uploader object used to upload general files.'''
-        return ckanext.filesystem.lib.uploader.FileSystemUpload(upload_to, old_filename)
+        return ckanext.localimp.lib.uploader.LocalimpUpload(upload_to, old_filename)
     def get_resource_uploader(self, data_dict):
         '''Return an uploader object used to upload resource files.'''
-        return ckanext.filesystem.lib.uploader.FileSystemResourceUpload(data_dict)
+        return ckanext.localimp.lib.uploader.LocalimpResourceUpload(data_dict)
 
     # IRoutes
     def before_map(self, map):
         # Local file import
         map.connect('sftp_filelist', '/sftp_filelist',
-                    controller='ckanext.filesystem.controllers.upload:UploadController',
+                    controller='ckanext.localimp.controllers.upload:UploadController',
                     action='show_filelist')
         map.connect('sftp_upload', '/sftp_upload',
-                    controller='ckanext.filesystem.controllers.upload:UploadController',
+                    controller='ckanext.localimp.controllers.upload:UploadController',
                     action='upload_file')
         # Package
         map.connect('new_resource', '/dataset/new_resource/{id}',
-                    controller='ckanext.filesystem.controllers.package_override:PackageContributeOverride',
+                    controller='ckanext.localimp.controllers.package_override:PackageContributeOverride',
                     action='new_resource')
         return map
 
