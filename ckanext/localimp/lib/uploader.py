@@ -62,7 +62,7 @@ def get_max_resource_size():
     return _max_resource_size
 
 
-class FileSystemUpload(object):
+class LocalimpUpload(object):
     def __init__(self, object_type, old_filename=None):
         ''' Setup upload by creating a subdirectory of the storage directory
         of name object_type. old_filename is the name of the file in the url
@@ -152,7 +152,7 @@ class FileSystemUpload(object):
             except OSError:
                 pass
 
-class FileSystemResourceUpload(object):
+class LocalimpResourceUpload(object):
     def __init__(self, resource):
         path = get_storage_path()
         if not path:
