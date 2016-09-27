@@ -179,3 +179,43 @@ class PackageContributeOverride(p.SingletonPlugin, PackageController):
             vars['stage'] = ['complete', 'active']
             template = 'package/new_resource.html'
         return render(template, extra_vars=vars)
+
+
+    ''' Package Controller
+    '''
+    # Restrict download from resource to registered user
+    def resource_download(self, id, resource_id, filename=None):
+        """
+        Provides a direct download by either redirecting the user to the url
+        stored or downloading an uploaded file directly.
+        """
+        context = {'model': model, 'session': model.Session,
+                   'user': c.user, 'auth_user_obj': c.userobj}
+
+        try:
+            rsc = get_action('resource_show')(context, {'id': resource_id})
+            get_action('package_show')(context, {'id': id})
+        except (NotFound, NotAuthorized):
+            abort(404, _('Resource not found'))
+
+        if authz.auth_is_anon_user(context):
+            abort(401, _('Unauthorized to read resource %s') % id)
+        else:
+            if rsc.get('url_type') == 'upload':
+                upload = uploader.ResourceUpload(rsc)
+                filepath = upload.get_path(rsc['id'])
+                fileapp = paste.fileapp.FileApp(filepath)
+                try:
+                    status, headers, app_iter = request.call_application(fileapp)
+                except OSError:
+                    abort(404, _('Resource data not found'))
+                response.headers.update(dict(headers))
+                content_type, content_enc = mimetypes.guess_type(
+                    rsc.get('url', ''))
+                if content_type:
+                    response.headers['Content-Type'] = content_type
+                response.status = status
+                return app_iter
+            elif not 'url' in rsc:
+                abort(404, _('No download is available'))
+            redirect(rsc['url'])
