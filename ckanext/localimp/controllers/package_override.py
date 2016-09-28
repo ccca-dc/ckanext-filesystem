@@ -19,6 +19,8 @@ from pylons.i18n.translation import _, ungettext
 import ckan.lib.i18n as i18n
 from ckan.controllers.package import PackageController
 import ckan.lib.navl.dictization_functions as dict_fns
+import ckan.authz as authz
+
 
 from urlparse import urlparse
 from posixpath import basename, dirname
@@ -181,8 +183,91 @@ class PackageContributeOverride(p.SingletonPlugin, PackageController):
         return render(template, extra_vars=vars)
 
 
-    ''' Package Controller
-    '''
+    def resource_edit(self, id, resource_id, data=None, errors=None,
+                      error_summary=None):
+
+        if request.method == 'POST' and not data:
+            data = data or \
+                clean_dict(dict_fns.unflatten(tuplize_dict(parse_params(
+                                                           request.POST))))
+            # we don't want to include save as it is part of the form
+            del data['save']
+
+            context = {'model': model, 'session': model.Session,
+                       'api_version': 3, 'for_edit': True,
+                       'user': c.user, 'auth_user_obj': c.userobj}
+
+            # Check form fields (remote file or local path)
+            if isinstance(data['upload_remote'],cgi.FieldStorage):
+                data['upload'] = data.pop('upload_remote')
+                del data['upload_local']
+            elif data['upload_local'] and pathlib2.Path.exists(pathlib2.Path(os.path.join(
+                    os.path.expanduser('~'+c.userobj.name),data.get('upload_local')))):
+                data['upload'] = pathlib2.Path(os.path.join(
+                    os.path.expanduser('~'+c.userobj.name),data.pop('upload_local')))
+                del data['upload_remote']
+            else:
+                del data['upload_local']
+                del data['upload_remote']
+
+            data['package_id'] = id
+            try:
+                if resource_id:
+                    data['id'] = resource_id
+                    get_action('resource_update')(context, data)
+                else:
+                    get_action('resource_create')(context, data)
+            except ValidationError, e:
+                errors = e.error_dict
+                error_summary = e.error_summary
+                return self.resource_edit(id, resource_id, data,
+                                          errors, error_summary)
+            except NotAuthorized:
+                abort(403, _('Unauthorized to edit this resource'))
+            redirect(h.url_for(controller='package', action='resource_read',
+                               id=id, resource_id=resource_id))
+
+        context = {'model': model, 'session': model.Session,
+                   'api_version': 3, 'for_edit': True,
+                   'user': c.user, 'auth_user_obj': c.userobj}
+        pkg_dict = get_action('package_show')(context, {'id': id})
+        if pkg_dict['state'].startswith('draft'):
+            # dataset has not yet been fully created
+            resource_dict = get_action('resource_show')(context,
+                                                        {'id': resource_id})
+            fields = ['url', 'resource_type', 'format', 'name', 'description',
+                      'id']
+            data = {}
+            for field in fields:
+                data[field] = resource_dict[field]
+            return self.new_resource(id, data=data)
+        # resource is fully created
+        try:
+            resource_dict = get_action('resource_show')(context,
+                                                        {'id': resource_id})
+        except NotFound:
+            abort(404, _('Resource not found'))
+        c.pkg_dict = pkg_dict
+        c.resource = resource_dict
+        # set the form action
+        c.form_action = h.url_for(controller='package',
+                                  action='resource_edit',
+                                  resource_id=resource_id,
+                                  id=id)
+        if not data:
+            data = resource_dict
+
+        package_type = pkg_dict['type'] or 'dataset'
+
+        errors = errors or {}
+        error_summary = error_summary or {}
+        vars = {'data': data, 'errors': errors,
+                'error_summary': error_summary, 'action': 'edit',
+                'resource_form_snippet': self._resource_form(package_type),
+                'dataset_type': package_type}
+        return render('package/resource_edit.html', extra_vars=vars)
+
+
     # Restrict download from resource to registered user
     def resource_download(self, id, resource_id, filename=None):
         """
@@ -219,3 +304,4 @@ class PackageContributeOverride(p.SingletonPlugin, PackageController):
             elif not 'url' in rsc:
                 abort(404, _('No download is available'))
             redirect(rsc['url'])
+

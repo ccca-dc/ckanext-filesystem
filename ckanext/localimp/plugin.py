@@ -85,7 +85,8 @@ class LocalimpPlugin(plugins.SingletonPlugin):
                     controller='ckanext.localimp.controllers.package_override:PackageContributeOverride',
                     action='new_resource')
 
-        map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}', controller='ckanext.ccca.controllers.package_override:PackageContributeOverride', action='resource_download')
+        map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}', controller='ckanext.localimp.controllers.package_override:PackageContributeOverride', action='resource_download')
+        map.connect('resource_edit', '/dataset/{id}/resource_edit/{resource_id}', controller='ckanext.localimp.controllers.package_override:PackageContributeOverride', action='resource_edit')
 
         return map
 
