@@ -1,0 +1,18 @@
+{
+  "scheming_presets_version": 1,
+  "about": "these are the localimp field presets",
+  "about_url": "http://github.com/ccca-dc/ckanext-localimp",
+  "presets": [
+    {
+      "preset_name": "resource_url_upload",
+      "values": {
+        "validators": "not_empty unicode remove_whitespace",
+        "form_snippet": "upload_localimp.html",
+        "form_placeholder": "http://example.com/my-data.csv",
+        "upload_field": "upload",
+        "upload_clear": "clear_upload",
+        "upload_label": "File"
+      }
+    }
+  ]
+}

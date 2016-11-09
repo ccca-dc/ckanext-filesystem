@@ -1,0 +1,50 @@
+{% import 'macros/form.html' as form %}
+
+{% resource 'localimp/localimp-image-upload.js' %}
+
+{% set is_upload = (data.url_type == 'upload') %}         
+
+{% set placeholder = placeholder if placeholder else _('http://example.com/my-image.jpg') %}
+{% set url_label = url_label or _('Image URL')  %}
+{% set upload_label = upload_label or _('Image')  %}
+
+{% set field_url='url' %}
+{% set field_upload='upload_remote' %}
+{% set field_clear='clear_upload' %}
+{% set is_upload_enabled=h.uploads_enabled() %}
+{% set is_url=data.url and not is_upload %}
+{% set upload_label=_('File') %}
+{% set url_label=_('URL') %}
+
+{% if is_upload_enabled %}
+<input id="upload_local" name="upload_local" type="hidden" value="">
+<div class="image-upload" data-module="localimp-image-upload"
+      data-module-host_url="{{ request.host_url }}"
+      data-module-is_url="{{ 'true' if is_url else 'false' }}"
+      data-module-is_upload="{{ 'true' if is_upload else 'false' }}"
+      data-module-field_url="{{ field_url }}"
+      data-module-field_upload="{{ field_upload }}"
+      data-module-field_clear="{{ field_clear }}"
+      data-module-upload_label="{{ upload_label }}"
+      data-module-username="{{ tmpl_context.userobj.name }}"
+      data-module-apikey="{{ tmpl_context.userobj.apikey }}"
+      data-module-pkg_id="{{tmpl_context.id}}"
+      data-module-ckan_url="{{data.ckan_url}}">
+{% endif %}
+
+{{ form.input(field_url, label=url_label, id='field-image-url',
+placeholder=placeholder, value=data.get(field_url),
+error=errors.get(field_url), classes=['control-full']) }}
+
+{% if is_upload_enabled %}
+  {{ form.input(field_upload, label=upload_label, id='field-localimp-image-upload', type='file', placeholder='', value='', error='', classes=['control-full']) }}
+
+  {% if is_upload %}
+    {{ form.checkbox(field_clear, label=_('Clear Upload'), id='field-clear-upload', value='true', error='', classes=['control-full']) }}
+  {% endif %}
+{% endif %}
+
+{% if is_upload_enabled %}</div>{% endif %}
+
+{# image_upload macro doesn't support call #}
+{%- snippet 'scheming/form_snippets/help_text.html', field=field -%}
