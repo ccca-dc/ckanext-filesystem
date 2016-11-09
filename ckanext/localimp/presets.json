@@ -4,7 +4,7 @@
   "about_url": "http://github.com/ccca-dc/ckanext-localimp",
   "presets": [
     {
-      "preset_name": "resource_url_upload",
+      "preset_name": "resource_url_upload_localimp",
       "values": {
         "validators": "not_empty unicode remove_whitespace",
         "form_snippet": "upload_localimp.html",
