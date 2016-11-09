@@ -8,16 +8,17 @@
 {% set url_label = url_label or _('Image URL')  %}
 {% set upload_label = upload_label or _('Image')  %}
 
-{% set field_url='url' %}
-{% set field_upload='upload_remote' %}
-{% set field_clear='clear_upload' %}
+{% set field_url=field.field_name %}
+{% set field_upload=field.upload_local %}
+{% set field_remote=field.upload_remote %}
+{% set field_clear=field.upload_clear %}
 {% set is_upload_enabled=h.uploads_enabled() %}
 {% set is_url=data.url and not is_upload %}
-{% set upload_label=_('File') %}
-{% set url_label=_('URL') %}
+{% set upload_label=h.scheming_language_text(field.upload_label) %}
+{% set url_label=h.scheming_language_text(field.label) %}
 
 {% if is_upload_enabled %}
-<input id="upload_local" name="upload_local" type="hidden" value="">
+<input id="{{ field_remote }}" name="{{ field_remote }}" type="hidden" value="">
 <div class="image-upload" data-module="localimp-image-upload"
       data-module-host_url="{{ request.host_url }}"
       data-module-is_url="{{ 'true' if is_url else 'false' }}"

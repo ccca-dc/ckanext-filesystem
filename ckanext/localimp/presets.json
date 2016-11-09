@@ -9,7 +9,8 @@
         "validators": "not_empty unicode remove_whitespace",
         "form_snippet": "upload_localimp.html",
         "form_placeholder": "http://example.com/my-data.csv",
-        "upload_field": "upload",
+        "upload_remote": "upload_remote",
+        "upload_local": "upload_local",
         "upload_clear": "clear_upload",
         "upload_label": "File"
       }
