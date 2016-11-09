@@ -4,6 +4,7 @@ from logging import getLogger
 
 import ckanext.localimp.lib.uploader
 
+import os
 import cgi
 import pprint
 import pathlib2
@@ -41,9 +42,9 @@ class LocalimpPlugin(plugins.SingletonPlugin):
                     controller='ckanext.localimp.controllers.upload:UploadController',
                     action='upload_file')
         # Package
-        map.connect('new_resource', '/dataset/new_resource/{id}',
-                    controller='ckanext.localimp.controllers.package_override:PackageContributeOverride',
-                    action='new_resource')
+#        map.connect('new_resource', '/dataset/new_resource/{id}',
+#                    controller='ckanext.localimp.controllers.package_override:PackageContributeOverride',
+#                    action='new_resource')
 
         map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}', controller='ckanext.localimp.controllers.package_override:PackageContributeOverride', action='resource_download')
         #map.connect('resource_edit', '/dataset/{id}/resource_edit/{resource_id}', controller='ckanext.localimp.controllers.package_override:PackageContributeOverride', action='resource_edit')
@@ -56,31 +57,36 @@ class LocalimpPlugin(plugins.SingletonPlugin):
         # Check form fields (remote file or local path)
         if isinstance(data_dict['upload_remote'],cgi.FieldStorage):
             data_dict['upload'] = data_dict.pop('upload_remote')
-            del data_dict['upload_local']
+            data_dict.pop('upload_local', None)
         elif data_dict['upload_local'] and pathlib2.Path.exists(pathlib2.Path(os.path.join(
-                os.path.expanduser('~'+c.userobj.name),data_dict.get('upload_local')))):
+                os.path.expanduser('~'+context['user']),data_dict.get('upload_local')))):
             data_dict['upload'] = pathlib2.Path(os.path.join(
-                os.path.expanduser('~'+c.userobj.name),data_dict.pop('upload_local')))
+                os.path.expanduser('~'+context['user']),data_dict.pop('upload_local')))
             log.debug('local')
-            del data_dict['upload_remote']
+            data_dict.pop('upload_remote', None)
         else:
-            del data_dict['upload_local']
-            del data_dict['upload_remote']
+            data_dict.pop('upload_local', None)
+            data_dict.pop('upload_remote', None)
+        log.debug("After")
+        log.debug(pprint.pprint(data_dict))
 
 
     def before_update(self, context, orig_data_dict, data_dict):
+        log.debug(pprint.pprint(data_dict))
         # Check form fields (remote file or local path)
         if isinstance(data_dict['upload_remote'],cgi.FieldStorage):
             data_dict['upload'] = data_dict.pop('upload_remote')
-            del data_dict['upload_local']
+            data_dict.pop('upload_local', None)
         elif data_dict['upload_local'] and pathlib2.Path.exists(pathlib2.Path(os.path.join(
-                os.path.expanduser('~'+c.userobj.name),data_dict.get('upload_local')))):
+                os.path.expanduser('~'+context['user']),data_dict.get('upload_local')))):
             data_dict['upload'] = pathlib2.Path(os.path.join(
-                os.path.expanduser('~'+c.userobj.name),data_dict.pop('upload_local')))
-            del data_dict['upload_remote']
+                os.path.expanduser('~'+context['user']),data_dict.pop('upload_local')))
+            data_dict.pop('upload_remote', None)
         else:
-            del data_dict['upload_local']
-            del data_dict['upload_remote']
+            data_dict.pop('upload_local', None)
+            data_dict.pop('upload_remote', None)
+        log.debug("After")
+        log.debug(pprint.pprint(data_dict))
 
 
     def after_map(self, map):

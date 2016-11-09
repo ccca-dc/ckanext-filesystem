@@ -8,6 +8,7 @@ this.ckan.module('localimp-image-upload', function($, _) {
       is_url: true,
       is_upload: false,
       field_upload: 'image_upload',
+      field_local: 'upload_local',
       field_url: 'image_url',
       field_clear: 'clear_upload',
       upload_label: '',
@@ -229,8 +230,9 @@ this.ckan.module('localimp-image-upload', function($, _) {
         this.field_url_input.prop('readonly', true);
         this.field_clear.val('');
         this._showOnlyFieldUrl();
-		    this.div_sftp.hide();
-		    $('#upload_local').val(file_name);
+	this.div_sftp.hide();
+	$('#upload_local').val(file_name);
+	//this.field_local.val(file_name);
     	}
 
     },
