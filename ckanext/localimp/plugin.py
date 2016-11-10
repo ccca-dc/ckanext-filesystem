@@ -55,37 +55,32 @@ class LocalimpPlugin(plugins.SingletonPlugin):
     def before_create(self, context, data_dict):
         log.debug(pprint.pprint(data_dict))
         # Check form fields (remote file or local path)
-        if isinstance(data_dict['upload_remote'],cgi.FieldStorage):
-            data_dict['upload'] = data_dict.pop('upload_remote')
-            data_dict.pop('upload_local', None)
-        elif data_dict['upload_local'] and pathlib2.Path.exists(pathlib2.Path(os.path.join(
-                os.path.expanduser('~'+context['user']),data_dict.get('upload_local')))):
+        upload_remote = data_dict.pop('upload_remote', None)
+        upload_local = data_dict.pop('upload_local', None)
+        if upload_remote and isinstance(upload_remote,cgi.FieldStorage):
+            data_dict['upload'] = upload_remote
+        if upload_local and pathlib2.Path.exists(pathlib2.Path(os.path.join(
+                os.path.expanduser('~'+context['user']),upload_local))):
             data_dict['upload'] = pathlib2.Path(os.path.join(
-                os.path.expanduser('~'+context['user']),data_dict.pop('upload_local')))
-            log.debug('local')
-            data_dict.pop('upload_remote', None)
-        else:
-            data_dict.pop('upload_local', None)
-            data_dict.pop('upload_remote', None)
-        log.debug("After")
+                os.path.expanduser('~'+context['user']),upload_local))
+
+        log.debug("After create")
         log.debug(pprint.pprint(data_dict))
 
 
     def before_update(self, context, orig_data_dict, data_dict):
         log.debug(pprint.pprint(data_dict))
         # Check form fields (remote file or local path)
-        if isinstance(data_dict['upload_remote'],cgi.FieldStorage):
-            data_dict['upload'] = data_dict.pop('upload_remote')
-            data_dict.pop('upload_local', None)
-        elif data_dict['upload_local'] and pathlib2.Path.exists(pathlib2.Path(os.path.join(
-                os.path.expanduser('~'+context['user']),data_dict.get('upload_local')))):
+        upload_remote = data_dict.pop('upload_remote', None)
+        upload_local = data_dict.pop('upload_local', None)
+        if upload_remote or isinstance(upload_remote,cgi.FieldStorage):
+            data_dict['upload'] = upload_remote
+        if upload_local and pathlib2.Path.exists(pathlib2.Path(os.path.join(
+                os.path.expanduser('~'+context['user']),upload_local))):
             data_dict['upload'] = pathlib2.Path(os.path.join(
-                os.path.expanduser('~'+context['user']),data_dict.pop('upload_local')))
-            data_dict.pop('upload_remote', None)
-        else:
-            data_dict.pop('upload_local', None)
-            data_dict.pop('upload_remote', None)
-        log.debug("After")
+                os.path.expanduser('~'+context['user']),upload_local))
+
+        log.debug("After update")
         log.debug(pprint.pprint(data_dict))
 
 
