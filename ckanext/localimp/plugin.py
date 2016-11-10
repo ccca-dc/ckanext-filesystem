@@ -41,19 +41,14 @@ class LocalimpPlugin(plugins.SingletonPlugin):
         map.connect('sftp_upload', '/sftp_upload',
                     controller='ckanext.localimp.controllers.upload:UploadController',
                     action='upload_file')
-        # Package
-#        map.connect('new_resource', '/dataset/new_resource/{id}',
-#                    controller='ckanext.localimp.controllers.package_override:PackageContributeOverride',
-#                    action='new_resource')
 
+        # download not possible for anonymous user
         map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}', controller='ckanext.localimp.controllers.package_override:PackageContributeOverride', action='resource_download')
-        #map.connect('resource_edit', '/dataset/{id}/resource_edit/{resource_id}', controller='ckanext.localimp.controllers.package_override:PackageContributeOverride', action='resource_edit')
 
         return map
 
     # IResourceController
     def before_create(self, context, data_dict):
-        log.debug(pprint.pprint(data_dict))
         # Check form fields (remote file or local path)
         upload_remote = data_dict.pop('upload_remote', None)
         upload_local = data_dict.pop('upload_local', None)
@@ -64,12 +59,8 @@ class LocalimpPlugin(plugins.SingletonPlugin):
             data_dict['upload'] = pathlib2.Path(os.path.join(
                 os.path.expanduser('~'+context['user']),upload_local))
 
-        log.debug("After create")
-        log.debug(pprint.pprint(data_dict))
-
 
     def before_update(self, context, orig_data_dict, data_dict):
-        log.debug(pprint.pprint(data_dict))
         # Check form fields (remote file or local path)
         upload_remote = data_dict.pop('upload_remote', None)
         upload_local = data_dict.pop('upload_local', None)
@@ -79,9 +70,6 @@ class LocalimpPlugin(plugins.SingletonPlugin):
                 os.path.expanduser('~'+context['user']),upload_local))):
             data_dict['upload'] = pathlib2.Path(os.path.join(
                 os.path.expanduser('~'+context['user']),upload_local))
-
-        log.debug("After update")
-        log.debug(pprint.pprint(data_dict))
 
 
     def after_map(self, map):
