@@ -18,6 +18,7 @@
 {% set url_label=h.scheming_language_text(field.label) %}
 
 {% if is_upload_enabled %}
+
 <div class="image-upload" data-module="localimp-image-upload"
       data-module-host_url="{{ request.host_url }}"
       data-module-is_url="{{ 'true' if is_url else 'false' }}"
