@@ -42,9 +42,6 @@ class LocalimpPlugin(plugins.SingletonPlugin):
                     controller='ckanext.localimp.controllers.upload:UploadController',
                     action='upload_file')
 
-        # download not possible for anonymous user
-        map.connect('resource_download', '/dataset/{id}/resource/{resource_id}/download/{filename}', controller='ckanext.localimp.controllers.package_override:PackageContributeOverride', action='resource_download')
-
         return map
 
     # IResourceController
