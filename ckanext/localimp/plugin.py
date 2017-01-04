@@ -49,7 +49,7 @@ class LocalimpPlugin(plugins.SingletonPlugin):
         # Check form fields (remote file or local path)
         upload_remote = data_dict.pop('upload_remote', None)
         upload_local = data_dict.pop('upload_local', None)
-        if upload_remote and isinstance(upload_remote,cgi.FieldStorage):
+        if upload_remote or isinstance(upload_remote,cgi.FieldStorage):
             data_dict['upload'] = upload_remote
         if upload_local and pathlib2.Path.exists(pathlib2.Path(os.path.join(
                 os.path.expanduser('~'+context['user']),upload_local))):
