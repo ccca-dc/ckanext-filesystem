@@ -1,8 +1,3 @@
-import logging
-
-import ckan.lib.munge as munge
-import ckan.model as model
-
 import os
 import shutil
 import cgi
@@ -10,6 +5,12 @@ import pylons
 import datetime
 import mimetypes
 import pathlib2
+
+import ckan.lib.munge as munge
+import ckan.logic as logic
+import ckan.model as model
+
+import logging
 
 config = pylons.config
 log = logging.getLogger(__name__)
