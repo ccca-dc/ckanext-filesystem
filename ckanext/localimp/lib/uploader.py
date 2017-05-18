@@ -262,6 +262,7 @@ class LocalimpResourceUpload(object):
                 uid = pwd.getpwnam("ckan").pw_uid
                 gid = grp.getgrnam("www-data").gr_gid
                 os.chown(filepath, uid, gid)
+                os.chmod(filepath, 0640)
                 return
 
         # The resource form only sets self.clear (via the input clear_upload)
