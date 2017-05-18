@@ -5,6 +5,7 @@ import pylons
 import datetime
 import mimetypes
 import pathlib2
+import grp, pwd
 
 import ckan.lib.munge as munge
 import ckan.logic as logic
@@ -258,6 +259,9 @@ class LocalimpResourceUpload(object):
                 # Move file to ckan file system path
                 # os.rename(os.path.join(self.filepath,self.filename),filepath)
                 shutil.move(str(self.localpath),filepath)
+                uid = pwd.getpwnam("ckan").pw_uid
+                gid = grp.getgrnam("www-data").gr_gid
+                os.chown(filepath, uid, gid)
                 return
 
         # The resource form only sets self.clear (via the input clear_upload)
