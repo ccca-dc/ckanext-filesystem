@@ -32,44 +32,57 @@
 ckanext-localimp
 =============
 
-.. Put a description of your extension here:
-   What does it do? What features does it have?
-   Consider including some screenshots or embedding a video!
+This extension enables users to import data from a home directory into ckan
+without the use of http uploads.
+
+**resource_create**
+Instead of the old parameter upload (FieldStorage (optional) needs multipart/form-data)
+there are now to possibilities, where the user can choose one:
+
+upload_remote: Upload your file as FieldStorage (original ckan functionality)
+
+upload_local: Filepath relative to your home directory
 
 
 ------------
 Requirements
 ------------
 
-For example, you might want to mention here which versions of CKAN this
-extension works with.
+The application server needs access to the users home directories. Therefore it
+is best that the user of the application server is in all usergroups. We use
+LDAP (PosixAccount) with the extension
+.. _ckanext-ldap: https://github.com/NaturalHistoryMuseum/ckanext-ldap
+and provide an extra input server with chrooted sftp and ftps access for the users.
 
+Serving big files via your application server (uwsgi, gunicorn, ...) is
+not a good idea, due to cache issues and blocking of workers. Therefore, we use
+the possibility of X-Accel-Redirect for nginx with a reverse proxy to uwsgi.
+This is implemented in the extension
+.. _ckanext-iauth: https://github.com/ccca-dc/ckanext-iauth/blob/master/ckanext/iauth/controllers/package_override.py
 
 ------------
 Installation
 ------------
 
-.. Add any additional install steps to the list below.
-   For example installing any non-Python dependencies or adding any required
-   config settings.
-
 To install ckanext-localimp:
 
-1. Activate your CKAN virtual environment, for example::
+1. Setup ckan with nginx + uwsgi 
+
+2. Activate your CKAN virtual environment, for example::
 
      . /usr/lib/ckan/default/bin/activate
 
-2. Install the ckanext-localimp Python package into your virtual environment::
+3. Install the ckanext-localimp Python package into your virtual environment::
 
-     pip install ckanext-localimp
+     python setup.py install
 
-3. Add ``localimp`` to the ``ckan.plugins`` setting in your CKAN
+4. Add ``localimp`` to the ``ckan.plugins`` setting in your CKAN
    config file (by default the config file is located at
    ``/etc/ckan/default/production.ini``).
 
-4. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu::
+5. Restart CKAN. For example if you've deployed CKAN with uwsgi (emperor) on Ubuntu::
 
-     sudo service apache2 reload
+     sudo service uwsgi-emperor restart
 
 
 ---------------
