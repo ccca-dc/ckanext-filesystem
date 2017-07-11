@@ -40,6 +40,7 @@ without the use of http uploads.
    there are now to possibilities, where the user can choose one:
 
    -upload_remote: Upload your file as FieldStorage (original ckan functionality)
+
    -upload_local: Filepath relative to your home directory
 
 
