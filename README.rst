@@ -37,7 +37,7 @@ without the use of http uploads.
 
 **resource_create**
    Instead of the old parameter upload (FieldStorage (optional) needs multipart/form-data)
-   there are now to possibilities, where the user can choose one:
+   there are now to possibilities, where one can be chosen:
 
    -upload_remote: Upload your file as FieldStorage (original ckan functionality)
 
@@ -51,14 +51,14 @@ Requirements
 The application server needs access to the users home directories. Therefore it
 is best that the user of the application server is in all usergroups. We use
 LDAP (PosixAccount) with the extension
-.. _ckanext-ldap: https://github.com/NaturalHistoryMuseum/ckanext-ldap
+`ckanext-ldap <https://github.com/NaturalHistoryMuseum/ckanext-ldap>`_
 and provide an extra input server with chrooted sftp and ftps access for the users.
 
 Serving big files via your application server (uwsgi, gunicorn, ...) is
 not a good idea, due to cache issues and blocking of workers. Therefore, we use
 the possibility of X-Accel-Redirect for nginx with a reverse proxy to uwsgi.
 This is implemented in the extension
-.. _ckanext-iauth: https://github.com/ccca-dc/ckanext-iauth/blob/master/ckanext/iauth/controllers/package_override.py
+`ckanext-iauth <https://github.com/ccca-dc/ckanext-iauth/blob/master/ckanext/iauth/controllers/package_override.py>`_
 
 ------------
 Installation
