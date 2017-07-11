@@ -36,12 +36,11 @@ This extension enables users to import data from a home directory into ckan
 without the use of http uploads.
 
 **resource_create**
-Instead of the old parameter upload (FieldStorage (optional) needs multipart/form-data)
-there are now to possibilities, where the user can choose one:
+   Instead of the old parameter upload (FieldStorage (optional) needs multipart/form-data)
+   there are now to possibilities, where the user can choose one:
 
-upload_remote: Upload your file as FieldStorage (original ckan functionality)
-
-upload_local: Filepath relative to your home directory
+   -upload_remote: Upload your file as FieldStorage (original ckan functionality)
+   -upload_local: Filepath relative to your home directory
 
 
 ------------
