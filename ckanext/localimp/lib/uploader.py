@@ -123,7 +123,7 @@ class LocalimpUpload(object):
     def upload(self, max_size=2):
         ''' Actually upload the file.
         This should happen just before a commit but after the data has
-        been validated and flushed to the db. This is so we do not store
+        been validated and flushed to the db. This is so w
         anything unless the request is actually good.
         max_size is size in MB maximum of the file'''
 
@@ -177,8 +177,10 @@ class LocalimpResourceUpload(object):
         if isinstance(upload_field, cgi.FieldStorage):
             self.upload_type = 'remote'
             self.filename = upload_field.filename
+            # GAS 2018-03-01 do not remove underscores
             # self.filename = munge.munge_filename(self.filename)
-            resource['url'] = munge.munge_filename(self.filename)
+            #resource['url'] = munge.munge_filename(self.filename)
+            resource['url'] = _munge_filename(self.filename)
             resource['url_type'] = 'upload'
             resource['last_modified'] = datetime.datetime.utcnow()
             self.url_type = resource['url_type']
@@ -188,8 +190,10 @@ class LocalimpResourceUpload(object):
             self.upload_type = 'local'
             self.localpath = upload_field.absolute()
             self.filename = upload_field.name
+            # GAS 2018-03-01 do not remove underscores
             # self.filename = munge.munge_filename(self.filename)
-            resource['url'] = munge.munge_filename(self.filename)
+            #resource['url'] = munge.munge_filename(self.filename)
+            resource['url'] = _munge_filename(self.filename)
             resource['url_type'] = 'upload'
             resource['last_modified'] = datetime.datetime.utcnow()
             self.url_type = resource['url_type']
@@ -275,3 +279,28 @@ class LocalimpResourceUpload(object):
                 os.remove(filepath)
             except OSError, e:
                 pass
+
+def _munge_filename(filename):
+    ''' Tidies a filename
+
+    Keeps the filename extension (e.g. .csv).
+    Strips off any path on the front.
+    '''
+
+    # just get the filename ignore the path
+    path, filename = os.path.split(filename)
+    # clean up
+    filename = substitute_ascii_equivalents(filename)
+    filename = filename.lower().strip()
+    filename = re.sub(r'[^a-zA-Z0-9. -]', '', filename).replace(' ', '-')
+    # resize if needed but keep extension
+    name, ext = os.path.splitext(filename)
+    # limit overly long extensions
+    if len(ext) > 21:
+        ext = ext[:21]
+    # max/min size
+    ext_length = len(ext)
+    name = _munge_to_length(name, max(3 - ext_length, 1), 100 - ext_length)
+    filename = name + ext
+
+    return filename
