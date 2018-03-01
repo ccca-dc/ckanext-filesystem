@@ -286,11 +286,13 @@ def _munge_filename(filename):
     Keeps the filename extension (e.g. .csv).
     Strips off any path on the front.
     '''
+    import re
+    import os.path
 
     # just get the filename ignore the path
     path, filename = os.path.split(filename)
     # clean up
-    filename = substitute_ascii_equivalents(filename)
+    filename = munge.substitute_ascii_equivalents(filename)
     filename = filename.lower().strip()
     filename = re.sub(r'[^a-zA-Z0-9. -]', '', filename).replace(' ', '-')
     # resize if needed but keep extension
@@ -304,3 +306,11 @@ def _munge_filename(filename):
     filename = name + ext
 
     return filename
+
+def _munge_to_length(string, min_length, max_length):
+    '''Pad/truncates a string'''
+    if len(string) < min_length:
+        string += '_' * (min_length - len(string))
+    if len(string) > max_length:
+        string = string[:max_length]
+    return string
