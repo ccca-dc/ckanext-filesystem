@@ -3,6 +3,7 @@ import ckan.plugins.toolkit as toolkit
 from logging import getLogger
 
 import ckanext.localimp.lib.uploader
+import ckanext.localimp.logic.action as action
 
 import os
 import cgi
@@ -15,6 +16,7 @@ log = getLogger(__name__)
 class LocalimpPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer, inherit=True)
     plugins.implements(plugins.IRoutes, inherit=True)
+    plugins.implements(plugins.IActions)
     plugins.implements(plugins.IUploader)
     plugins.implements(plugins.IResourceController, inherit=True)
 
@@ -43,6 +45,12 @@ class LocalimpPlugin(plugins.SingletonPlugin):
                     action='upload_file')
 
         return map
+
+    # IActions
+    def get_actions(self):
+        actions = {'localimp_ls': action.localimp_ls,
+                   'localimp_show_files': action.localimp_show_files}
+        return actions
 
     # IResourceController
     def before_create(self, context, data_dict):
