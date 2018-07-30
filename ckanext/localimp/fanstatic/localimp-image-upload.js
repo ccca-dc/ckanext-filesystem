@@ -39,6 +39,13 @@ this.ckan.module('localimp-image-upload', function($, _) {
       var field_clear = 'input[name="' + options.field_clear + '"]';
 
       // FIXME Define Variable in global scope - Bad Practice
+      this.sandbox = ckan.sandbox();
+      this.sandbox.client.call('GET','localimp_show_files',
+                                  '?id='+ options.resource_id,
+                                  this._onHandleData,
+                                  this._onHandleError
+                              );
+
       apikey = options.apikey;
 
       this.input = $(field_upload, this.el);

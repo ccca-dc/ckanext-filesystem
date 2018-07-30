@@ -3,7 +3,6 @@ import ckan.plugins.toolkit as toolkit
 from logging import getLogger
 
 import ckanext.localimp.lib.uploader
-import ckanext.localimp.logic.action as action
 
 import os
 import cgi
@@ -17,6 +16,7 @@ class LocalimpPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer, inherit=True)
     plugins.implements(plugins.IRoutes, inherit=True)
     plugins.implements(plugins.IActions)
+    plugins.implements(plugins.IAuthFunctions, inherit=True)
     plugins.implements(plugins.IUploader)
     plugins.implements(plugins.IResourceController, inherit=True)
 
@@ -26,6 +26,32 @@ class LocalimpPlugin(plugins.SingletonPlugin):
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'localimp')
 
+    # IRoutes
+    def before_map(self, map):
+        # Local file import
+        map.connect('sftp_filelist', '/sftp_filelist',
+                    controller='ckanext.localimp.controllers.upload:UploadController',
+                    action='show_filelist')
+
+        return map
+
+    # IActions
+    def get_actions(self):
+        import ckanext.localimp.logic.action as action
+        actions = {
+            'localimp_show_files': action.localimp_show_files,
+            'localimp_create_symlink': action.localimp_create_symlink,
+            }
+        return actions
+
+    # IAuthFunctions
+    def get_auth_functions(self):
+        import ckanext.localimp.logic.auth as auth
+        return {
+            'localimp_show_files': auth.localimp_show_files,
+            'localimp_create_symlink': auth.localimp_create_symlink,
+        }
+
     # IUploader
     def get_uploader(self, upload_to, old_filename=None):
         '''Return an uploader object used to upload general files.'''
@@ -33,24 +59,6 @@ class LocalimpPlugin(plugins.SingletonPlugin):
     def get_resource_uploader(self, data_dict):
         '''Return an uploader object used to upload resource files.'''
         return ckanext.localimp.lib.uploader.LocalimpResourceUpload(data_dict)
-
-    # IRoutes
-    def before_map(self, map):
-        # Local file import
-        map.connect('sftp_filelist', '/sftp_filelist',
-                    controller='ckanext.localimp.controllers.upload:UploadController',
-                    action='show_filelist')
-        map.connect('sftp_upload', '/sftp_upload',
-                    controller='ckanext.localimp.controllers.upload:UploadController',
-                    action='upload_file')
-
-        return map
-
-    # IActions
-    def get_actions(self):
-        actions = {'localimp_ls': action.localimp_ls,
-                   'localimp_show_files': action.localimp_show_files}
-        return actions
 
     # IResourceController
     def before_create(self, context, data_dict):
@@ -75,8 +83,3 @@ class LocalimpPlugin(plugins.SingletonPlugin):
                 os.path.expanduser('~'+context['user']),upload_local))):
             data_dict['upload'] = pathlib2.Path(os.path.join(
                 os.path.expanduser('~'+context['user']),upload_local))
-
-
-    def after_map(self, map):
-        #log.fatal("==================================> %s" % map)
-        return map
