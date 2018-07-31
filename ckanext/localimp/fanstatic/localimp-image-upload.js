@@ -40,12 +40,6 @@ this.ckan.module('localimp-image-upload', function($, _) {
 
       // FIXME Define Variable in global scope - Bad Practice
       this.sandbox = ckan.sandbox();
-      this.sandbox.client.call('GET','localimp_show_files',
-                                  '?id='+ options.resource_id,
-                                  this._onHandleData,
-                                  this._onHandleError
-                              );
-
       apikey = options.apikey;
 
       this.input = $(field_upload, this.el);
@@ -167,12 +161,12 @@ this.ckan.module('localimp-image-upload', function($, _) {
    _refreshSFTPFilelist: function() {
      // var apikey = this.options.apikey;
 	   $.ajax({
-	    	  url: "/sftp_filelist?apikey=" + apikey,
+	    	  url: "/api/3/action/localimp_show_files",
 	    	  context: document.body
 	    	}).done(function() {
 	    	  $(this).addClass( "done" );
 	    	}).success(function(json) {
-	    		var parsed = JSON.parse(json);
+	    		var parsed = JSON.parse(json['result']);
 	    		var filelist = [];
 	    		for(var x in parsed){
 	    			filelist.push(parsed[x]);
@@ -243,6 +237,7 @@ this.ckan.module('localimp-image-upload', function($, _) {
     	}
 
     },
+
 
     /* Show only the buttons, hiding all others
      *

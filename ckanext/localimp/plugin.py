@@ -41,6 +41,8 @@ class LocalimpPlugin(plugins.SingletonPlugin):
         actions = {
             'localimp_show_files': action.localimp_show_files,
             'localimp_create_symlink': action.localimp_create_symlink,
+            'localimp_remove_symlink': action.localimp_remove_symlink,
+            'localimp_clear_export': action.localimp_clear_export,
             }
         return actions
 
@@ -50,6 +52,8 @@ class LocalimpPlugin(plugins.SingletonPlugin):
         return {
             'localimp_show_files': auth.localimp_show_files,
             'localimp_create_symlink': auth.localimp_create_symlink,
+            'localimp_remove_symlink': auth.localimp_remove_symlink,
+            'localimp_clear_export': auth.localimp_clear_export,
         }
 
     # IUploader
