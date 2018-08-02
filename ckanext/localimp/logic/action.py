@@ -1,5 +1,6 @@
 import ckan.plugins.toolkit as tk
 import ckan.lib.uploader as uploader
+from pylons import config
 
 import shutil
 import os
@@ -16,7 +17,7 @@ def localimp_show_files(context, data_dict):
 
     exclude_prefixes = ('__', '.')  # exclusion prefixes
     user_name = context.get('user')
-    # TODO undo changes here
+    # TODO revert comments
     rootdir = os.path.join(os.path.expanduser('~' + user_name), '')
     # rootdir = os.path.join('/e/user/home', user_name, '')
 
@@ -43,7 +44,7 @@ def localimp_create_symlink(context, data_dict):
     """
     tk.check_access('localimp_create_symlink', context, data_dict)
 
-    export_directory = tk.config.get('ckan.localimp.export_directory')
+    export_directory = config.get('ckanext.localimp.export_directory')
 
     if "directory_name" in data_dict:
         directory_name = pv.replace_symbol(pv.sanitize_filepath(data_dict.get("directory_name")))
@@ -80,7 +81,7 @@ def localimp_remove_symlink(context, data_dict):
     """
     tk.check_access('localimp_remove_symlink', context, data_dict)
 
-    export_directory = tk.config.get('ckan.localimp.export_directory')
+    export_directory = config.get('ckanext.localimp.export_directory')
 
     if "directory_name" in data_dict:
         directory_name = pv.replace_symbol(pv.sanitize_filepath(data_dict.get("directory_name")))
@@ -110,7 +111,7 @@ def localimp_clear_export(context, data_dict):
     """
     tk.check_access('localimp_clear_export', context, data_dict)
 
-    export_directory = tk.config.get('ckan.localimp.export_directory')
+    export_directory = config.get('ckanext.localimp.export_directory')
 
     if "directory_name" in data_dict:
         export_directory = os.path.join(export_directory, data_dict.get("directory_name"))
