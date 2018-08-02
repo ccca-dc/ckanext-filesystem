@@ -32,7 +32,6 @@ class LocalimpPlugin(plugins.SingletonPlugin):
         map.connect('sftp_filelist', '/sftp_filelist',
                     controller='ckanext.localimp.controllers.upload:UploadController',
                     action='show_filelist')
-
         return map
 
     # IActions
@@ -49,12 +48,13 @@ class LocalimpPlugin(plugins.SingletonPlugin):
     # IAuthFunctions
     def get_auth_functions(self):
         import ckanext.localimp.logic.auth as auth
-        return {
+        auths = {
             'localimp_show_files': auth.localimp_show_files,
             'localimp_create_symlink': auth.localimp_create_symlink,
             'localimp_remove_symlink': auth.localimp_remove_symlink,
             'localimp_clear_export': auth.localimp_clear_export,
         }
+        return auths
 
     # IUploader
     def get_uploader(self, upload_to, old_filename=None):

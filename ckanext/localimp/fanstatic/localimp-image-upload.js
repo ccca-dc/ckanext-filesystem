@@ -166,7 +166,7 @@ this.ckan.module('localimp-image-upload', function($, _) {
 	    	}).done(function() {
 	    	  $(this).addClass( "done" );
 	    	}).success(function(json) {
-	    		var parsed = JSON.parse(json['result']);
+	    		var parsed = json['result'];
 	    		var filelist = [];
 	    		for(var x in parsed){
 	    			filelist.push(parsed[x]);
