@@ -91,8 +91,8 @@ def localimp_remove_symlink(context, data_dict):
     pkg_dct = tk.get_action("package_show")(context,{"id": data_dict.get("id", None)})
 
     # TODO undo changes here
-    #dest_dir = os.path.join(os.path.expanduser('~' + user_name), export_directory, pkg_dct.get("name"))
-    dest_dir = os.path.join('/e/user/home', user_name, export_directory, pkg_dct.get("name"))
+    dest_dir = os.path.join(os.path.expanduser('~' + user_name), export_directory, pkg_dct.get("name"))
+    # dest_dir = os.path.join('/e/user/home', user_name, export_directory, pkg_dct.get("name"))
 
     if not os.path.exists(dest_dir):
         tk.ObjectNotFound("The path to the resource does not exist")
@@ -105,7 +105,7 @@ def localimp_remove_symlink(context, data_dict):
 def localimp_clear_export(context, data_dict):
     """
     Removes all symlinks in export directory from the users home directory
-    :param directory_name: A higher level directory, where the package_name directorys are located (e.g for Baskets) (optional)
+    :param directory_name: A higher level directory, where the package_name directories are located (e.g for Baskets) (optional)
     :type directory_name: string
     :returns:
     """
@@ -114,12 +114,14 @@ def localimp_clear_export(context, data_dict):
     export_directory = config.get('ckanext.localimp.export_directory')
 
     if "directory_name" in data_dict:
-        export_directory = os.path.join(export_directory, data_dict.get("directory_name"))
+        export_directory = os.path.join(export_directory,
+                                        data_dict.get("directory_name"))
 
     user_name = context.get('user')
 
     # TODO undo changes here
-    dest_dir = os.path.join(os.path.expanduser('~' + user_name), export_directory)
+    dest_dir = os.path.join(os.path.expanduser('~' + user_name),
+                            export_directory)
     # dest_dir = os.path.join('/e/user/home', user_name, export_directory)
 
     if not os.path.exists(dest_dir):
